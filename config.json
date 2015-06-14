@@ -1,0 +1,66 @@
+{
+    "cdn":{
+        "url":"http://localhost:5001/cdn/"
+    },
+    "parameters": {
+        "urls": [
+            {"pattern": "/pattern/.*-(\\d+)", "names": ["storyId"]}
+        ],
+        "servers": {
+            "local": "http://localhost",
+            "port":"3000"
+        }
+    },
+    "backend": [
+        {
+            "pattern": "tasks(/.*)*",
+            "timeout": "1000",
+            "target":"http://localhost:5001",
+            "host":"localhost",
+            "ttl":"1s",
+			"cacheKey":"backend:{{url:path}}",
+            "dontPassUrl":true,
+            "quietFailure": true
+        },
+        {
+            "pattern": "projects/.*",
+            "timeout": "1000",
+            "target":"http://localhost:5002",
+            "host":"localhost",
+            "ttl":"1s",
+            "cacheKey":"backend:{{url:path}}",
+            "dontPassUrl": true,
+            "quietFailure": false
+        }
+        ,
+        {
+            "pattern": ".*",
+            "timeout": "1000",
+            "target":"http://localhost:3001",
+            "host":"localhost",
+            "ttl":"1s",
+            "cacheKey":"backend:{{url:path}}",
+            "dontPassUrl": true,
+            "quietFailure": false
+        }
+    ],
+    "statusCodeHandlers":{
+        "403":{
+            "fn":"handle403",
+            "data":{
+                "redirect":"http://www.google.com"
+            }
+        }
+    },
+    "circuitbreaker":{
+        "windowDuration":10000,
+        "numBuckets": 10,
+        "errorThreshold": 20,
+        "volumeThreshold": 5,
+        "includePath":true,
+        "publishToRedis":"redis://localhost:6379?db=0"
+    },
+    "hogan": {
+        "delimiters": "{{ }}"
+    }
+}

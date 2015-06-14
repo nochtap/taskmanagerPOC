@@ -1,0 +1,12 @@
+extends twoColumns
+
+block content
+  h1= title
+  p Welcome to #{title}
+  div#list
+    article#tasks
+      h2='All tasks'
+      div(cx-url='{{server:local}}:{{server:port}}/tasks/f')
+    article#projects
+      h2='All projects'
+      div(cx-url='{{server:local}}:{{server:port}}/projects/f')
